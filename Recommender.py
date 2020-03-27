@@ -68,7 +68,7 @@ def createPlotsDueToSimilarityUsed():
 
     print("\n-----------3-folds cross validation for Item based Collaborative Filtering----------")
     print("-----------MSD----------\n")
-    algo = KNNBasic(sim_options={'name': 'MSD', 'user_based': True})
+    algo = KNNBasic(sim_options={'name': 'MSD', 'user_based': False})
     item_MSD = cross_validate(algo, data, cv=3, verbose=True)
     plotArrayRMSE.append(["Item based Collaborative Filtering", 1, item_MSD["test_rmse"].mean()])
     plotArrayMAE.append(["Item based Collaborative Filtering", 1, item_MSD["test_mae"].mean()])
@@ -82,7 +82,7 @@ def createPlotsDueToSimilarityUsed():
 
     print("\n-----------3-folds cross validation for Item based Collaborative Filtering----------")
     print("-----------Cosine----------\n")
-    algo = KNNBasic(sim_options={'name': 'MSD', 'user_based': True})
+    algo = KNNBasic(sim_options={'name': 'MSD', 'user_based': False})
     item_Cos = cross_validate(algo, data, cv=3, verbose=True)
     plotArrayRMSE.append(["Item based Collaborative Filtering", 2, item_Cos["test_rmse"].mean()])
     plotArrayMAE.append(["Item based Collaborative Filtering", 2, item_Cos["test_mae"].mean()])
@@ -96,7 +96,7 @@ def createPlotsDueToSimilarityUsed():
 
     print("\n-----------3-folds cross validation for Item based Collaborative Filtering----------")
     print("-----------pearson----------\n")
-    algo = KNNBasic(sim_options={'name': 'MSD', 'user_based': True})
+    algo = KNNBasic(sim_options={'name': 'MSD', 'user_based': False})
     item_Pear = cross_validate(algo, data, cv=3, verbose=True)
     plotArrayRMSE.append(["Item based Collaborative Filtering", 3, item_Pear["test_rmse"].mean()])
     plotArrayMAE.append(["Item based Collaborative Filtering", 3, item_Pear["test_mae"].mean()])
