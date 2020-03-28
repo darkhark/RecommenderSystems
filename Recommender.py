@@ -101,18 +101,42 @@ def createPlotsDueToSimilarityUsed():
     plotArrayRMSE.append(["Item based Collaborative Filtering", 3, item_Pear["test_rmse"].mean()])
     plotArrayMAE.append(["Item based Collaborative Filtering", 3, item_Pear["test_mae"].mean()])
 
-    print(plotArrayRMSE)
     plotRmseDF = pd.DataFrame(data=plotArrayRMSE, columns=["Filtering Method Used", "Algorithm", "RMSE"])
     plotRmseDF.pivot("Algorithm", "Filtering Method Used", "RMSE").plot(kind="bar")
+    plt.title("User vs Item Based Collaboration (RMSE)")
+    plt.ylabel("RMSE")
     plt.ylim(.9, 1.1)
     plt.show()
 
-    print(plotArrayMAE)
-    plotRmseDF = pd.DataFrame(data=plotArrayMAE, columns=["Filtering Method Used", "Algorithm", "MAE"])
-    plotRmseDF.pivot("Algorithm", "Filtering Method Used", "MAE").plot(kind="bar")
+    plotMaeDF = pd.DataFrame(data=plotArrayMAE, columns=["Filtering Method Used", "Algorithm", "MAE"])
+    plotMaeDF.pivot("Algorithm", "Filtering Method Used", "MAE").plot(kind="bar")
+    plt.title("User vs Item Based Collaboration (MAE)")
+    plt.ylabel("MAE")
     plt.ylim(.7, .9)
     plt.show()
 
 
+def compareNearestNeighborsUserItemBased():
+    plotNearest = []
+    i = 1
+    while i < 21:
+        algo = KNNBasic(k=i, sim_options={'name': 'MSD', 'user_based': True})
+        user_MSD = cross_validate(algo, data, cv=3, verbose=True)
+        plotNearest.append(["User based Collaborative Filtering", i, user_MSD["test_rmse"].mean()])
+        algo = KNNBasic(k=i, sim_options={'name': 'MSD', 'user_based': False})
+        item_MSD = cross_validate(algo, data, cv=3, verbose=True)
+        plotNearest.append(["Item based Collaborative Filtering", i, item_MSD["test_rmse"].mean()])
+        print("\n--------- Iteration:", i, "--------------\n")
+        i += 1
+    plotDF = pd.DataFrame(data=plotNearest, columns=["Classifier", "K Value", "Score"])
+    plotDF.pivot("K Value", "Classifier", "Score").plot(kind="bar")
+    plt.ylim(.9, 1.5)
+    plt.title("User vs Item Based Collaboration (K-value)")
+    plt.ylabel("RMSE")
+    plt.show()
+
+
+compareRmseAndMaeForSvdPmfNmfUserBasedItemBased()
 createPlotsDueToSimilarityUsed()
+compareNearestNeighborsUserItemBased()
 
