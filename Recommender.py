@@ -5,6 +5,8 @@ import random
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from threading import Thread
+
 
 my_seed = 0
 random.seed(my_seed)
@@ -82,7 +84,7 @@ def createPlotsDueToSimilarityUsed():
 
     print("\n-----------3-folds cross validation for Item based Collaborative Filtering----------")
     print("-----------Cosine----------\n")
-    algo = KNNBasic(sim_options={'name': 'MSD', 'user_based': False})
+    algo = KNNBasic(sim_options={'name': 'cosine', 'user_based': False})
     item_Cos = cross_validate(algo, data, cv=3, verbose=True)
     plotArrayRMSE.append(["Item based Collaborative Filtering", 2, item_Cos["test_rmse"].mean()])
     plotArrayMAE.append(["Item based Collaborative Filtering", 2, item_Cos["test_mae"].mean()])
@@ -96,7 +98,7 @@ def createPlotsDueToSimilarityUsed():
 
     print("\n-----------3-folds cross validation for Item based Collaborative Filtering----------")
     print("-----------pearson----------\n")
-    algo = KNNBasic(sim_options={'name': 'MSD', 'user_based': False})
+    algo = KNNBasic(sim_options={'name': 'pearson', 'user_based': False})
     item_Pear = cross_validate(algo, data, cv=3, verbose=True)
     plotArrayRMSE.append(["Item based Collaborative Filtering", 3, item_Pear["test_rmse"].mean()])
     plotArrayMAE.append(["Item based Collaborative Filtering", 3, item_Pear["test_mae"].mean()])
@@ -116,27 +118,33 @@ def createPlotsDueToSimilarityUsed():
     plt.show()
 
 
-def compareNearestNeighborsUserItemBased():
+def compareNearestNeighborsUserItemBased(allData):
     plotNearest = []
-    i = 1
-    while i < 21:
+    if allData:
+        i = 1
+    else:
+        i = 20
+    while i < 61:
+        print("_______________ Iteration", i, "_______________")
         algo = KNNBasic(k=i, sim_options={'name': 'MSD', 'user_based': True})
         user_MSD = cross_validate(algo, data, cv=3, verbose=True)
         plotNearest.append(["User based Collaborative Filtering", i, user_MSD["test_rmse"].mean()])
         algo = KNNBasic(k=i, sim_options={'name': 'MSD', 'user_based': False})
         item_MSD = cross_validate(algo, data, cv=3, verbose=True)
         plotNearest.append(["Item based Collaborative Filtering", i, item_MSD["test_rmse"].mean()])
-        print("\n--------- Iteration:", i, "--------------\n")
         i += 1
     plotDF = pd.DataFrame(data=plotNearest, columns=["Classifier", "K Value", "Score"])
     plotDF.pivot("K Value", "Classifier", "Score").plot(kind="bar")
-    plt.ylim(.9, 1.5)
     plt.title("User vs Item Based Collaboration (K-value)")
     plt.ylabel("RMSE")
+    if allData:
+        plt.ylim(.9, 1.1)
+    else:
+        plt.ylim(.95, 1.0)
     plt.show()
 
 
-compareRmseAndMaeForSvdPmfNmfUserBasedItemBased()
-createPlotsDueToSimilarityUsed()
-compareNearestNeighborsUserItemBased()
-
+# compareRmseAndMaeForSvdPmfNmfUserBasedItemBased()
+# createPlotsDueToSimilarityUsed()
+compareNearestNeighborsUserItemBased(False)
+compareNearestNeighborsUserItemBased(True)
